@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Workout } from '@/types/workout';
 import type { Metadata } from 'next';
+import WorkoutActionButtons from '@/components/workout/WorkoutActionButtons';
 
 interface WorkoutPageProps {
   params: Promise<{ id: string }>;
@@ -53,7 +54,7 @@ export default async function WorkoutDetailPage({ params }: WorkoutPageProps) {
   return (
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-14 items-start">
-        {/* Left Side — Visual / Media */}
+        {/* Left Side — Visual */}
         <div className="relative w-full aspect-[4/5] sm:aspect-square lg:aspect-[4/5] rounded-3xl overflow-hidden bg-zinc-900 border border-zinc-800/80 shadow-2xl">
           <Image
             src={workout.image}
@@ -72,7 +73,7 @@ export default async function WorkoutDetailPage({ params }: WorkoutPageProps) {
             {workout.name}
           </h1>
 
-          {/* Description */}
+          {/* Subtitle */}
           <p className="text-zinc-400 text-sm sm:text-base leading-relaxed mb-5 font-sans">
             {workout.description}
           </p>
@@ -139,21 +140,7 @@ export default async function WorkoutDetailPage({ params }: WorkoutPageProps) {
           )}
 
           {/* Call-to-action buttons */}
-          <div className="flex flex-wrap items-center gap-4 pt-2">
-            <button className="bg-[#a3e635] hover:bg-[#b8ff00] text-black font-black text-xs sm:text-sm px-6 py-3.5 rounded-lg transition-all flex items-center gap-2.5 shadow-lg transform hover:scale-[1.02] active:scale-[0.98]">
-              <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2zm-7 5h5v2h-5v5h-2v-5H7v-2h5v-5h2v5z" />
-              </svg>
-              <span>Add to today&apos;s plan</span>
-            </button>
-
-            <button className="border border-zinc-700/80 hover:border-zinc-500 bg-zinc-900/40 text-zinc-200 hover:text-white font-bold text-xs sm:text-sm px-6 py-3.5 rounded-lg transition-all flex items-center gap-2.5 transform hover:scale-[1.02] active:scale-[0.98]">
-              <svg className="w-4 h-4 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
-                <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
-              </svg>
-              <span>Save for later</span>
-            </button>
-          </div>
+          <WorkoutActionButtons workout={workout} />
         </div>
       </div>
     </main>

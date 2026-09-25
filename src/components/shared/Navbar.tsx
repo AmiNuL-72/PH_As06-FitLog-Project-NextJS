@@ -5,14 +5,12 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import logoImg from '@/assets/logo.png';
+import { useWorkout } from '@/context/WorkoutContext';
 
-interface NavbarProps {
-  planCount?: number;
-  savedCount?: number;
-}
 
-const Navbar: React.FC<NavbarProps> = ({ planCount = 0, savedCount = 0 }) => {
+const Navbar: React.FC = () => {
   const pathname = usePathname();
+  const { planList, savedList } = useWorkout();
 
   const navLinks = [
     { name: 'Workouts', href: '/' },
@@ -65,23 +63,23 @@ const Navbar: React.FC<NavbarProps> = ({ planCount = 0, savedCount = 0 }) => {
         <div className="flex items-center gap-4 text-xs">
           {/* Plan Badge */}
           <Link
-            href="/my-plan"
+            href="/my-plan?tab=plan"
             className="flex items-center gap-2 text-zinc-400 font-medium hover:text-white transition-colors"
           >
             <span>Plan</span>
             <span className="w-5 h-5 rounded-full bg-[#a3e635] text-black text-[11px] font-bold flex items-center justify-center">
-              {planCount}
+              {planList.length}
             </span>
           </Link>
 
           {/* Saved Badge */}
           <Link
-            href="/my-plan"
+            href="/my-plan?tab=saved"
             className="flex items-center gap-2 text-zinc-400 font-medium hover:text-white transition-colors"
           >
             <span>Saved</span>
             <span className="w-5 h-5 rounded-full border border-zinc-700 text-zinc-300 text-[11px] font-bold flex items-center justify-center">
-              {savedCount}
+              {savedList.length}
             </span>
           </Link>
         </div>
