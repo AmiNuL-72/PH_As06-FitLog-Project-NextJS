@@ -1,6 +1,7 @@
-import React from 'react';
 import { Workout } from '@/types/workout';
+import React from 'react';
 import WorkoutCard from './WorkoutCard';
+
 
 async function getWorkouts(): Promise<Workout[]> {
   try {

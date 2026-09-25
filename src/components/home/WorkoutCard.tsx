@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Workout } from '@/types/workout';
 
+
 interface WorkoutCardProps {
   workout: Workout;
 }
