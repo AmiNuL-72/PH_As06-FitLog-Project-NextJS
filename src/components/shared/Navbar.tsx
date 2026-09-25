@@ -2,13 +2,14 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import logoImg from '@/assets/logo.png';
 
 interface NavbarProps {
   planCount?: number;
   savedCount?: number;
 }
-
 
 const Navbar: React.FC<NavbarProps> = ({ planCount = 0, savedCount = 0 }) => {
   const pathname = usePathname();
@@ -19,23 +20,26 @@ const Navbar: React.FC<NavbarProps> = ({ planCount = 0, savedCount = 0 }) => {
   ];
 
   return (
-    <header className="w-full bg-[#111318] border-b border-zinc-800/80 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <header className="w-full bg-[#0d0e12] sticky top-0 z-50 py-3 sm:py-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between">
         {/* Left Side: Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="text-[#ccff00] transform -rotate-45 transition-transform group-hover:rotate-0">
-            <svg
-              className="w-6 h-6 fill-current"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path d="M6.5 5A1.5 1.5 0 0 0 5 6.5v11A1.5 1.5 0 0 0 6.5 19H7a1 1 0 0 0 1-1v-2h8v2a1 1 0 0 0 1 1h.5a1.5 1.5 0 0 0 1.5-1.5v-11A1.5 1.5 0 0 0 17.5 5H17a1 1 0 0 0-1 1v2H8V6a1 1 0 0 0-1-1h-.5zM3 8.5A1.5 1.5 0 0 1 4.5 7H5v10h-.5A1.5 1.5 0 0 1 3 15.5v-7zm16.5-1.5a1.5 1.5 0 0 1 1.5 1.5v7a1.5 1.5 0 0 1-1.5 1.5H19V7h.5z" />
-            </svg>
+          <div className="w-7 h-7 relative flex items-center justify-center">
+            <Image
+              src={logoImg}
+              alt="FitLog Logo"
+              width={28}
+              height={28}
+              className="object-contain"
+            />
           </div>
-          <span className="text-white font-extrabold tracking-wider text-xl uppercase">FITLOG</span>
+          <span className="font-display text-white font-extrabold tracking-wider text-xl uppercase leading-none">
+            FITLOG
+          </span>
         </Link>
-     {/* Middle: Navigation Links */}
-        <nav className="flex items-center gap-2">
+
+        {/* Middle: Navigation Links */}
+        <nav className="flex items-center gap-1 sm:gap-2">
           {navLinks.map((link) => {
             const isActive =
               pathname === link.href ||
@@ -45,9 +49,9 @@ const Navbar: React.FC<NavbarProps> = ({ planCount = 0, savedCount = 0 }) => {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
                   isActive
-                    ? 'bg-[#1b2b10] text-[#ccff00]'
+                    ? 'bg-[#18260f] text-[#a3e635]'
                     : 'text-zinc-400 hover:text-white'
                 }`}
               >
@@ -58,24 +62,30 @@ const Navbar: React.FC<NavbarProps> = ({ planCount = 0, savedCount = 0 }) => {
         </nav>
 
         {/* Right Side: Status Badges */}
-        <div className="flex items-center gap-4 text-xs sm:text-sm">
+        <div className="flex items-center gap-4 text-xs">
           {/* Plan Badge */}
-          <div className="flex items-center gap-2 text-zinc-300 font-medium">
+          <Link
+            href="/my-plan"
+            className="flex items-center gap-2 text-zinc-400 font-medium hover:text-white transition-colors"
+          >
             <span>Plan</span>
-            <span className="w-5 h-5 rounded-full bg-[#ccff00] text-black text-xs font-bold flex items-center justify-center">
+            <span className="w-5 h-5 rounded-full bg-[#a3e635] text-black text-[11px] font-bold flex items-center justify-center">
               {planCount}
             </span>
-          </div>
-        
-         {/* Saved Badge */}
-          <div className="flex items-center gap-2 text-zinc-300 font-medium">
+          </Link>
+
+          {/* Saved Badge */}
+          <Link
+            href="/my-plan"
+            className="flex items-center gap-2 text-zinc-400 font-medium hover:text-white transition-colors"
+          >
             <span>Saved</span>
-            <span className="w-5 h-5 rounded-full border border-zinc-600 text-zinc-300 text-xs font-bold flex items-center justify-center">
+            <span className="w-5 h-5 rounded-full border border-zinc-700 text-zinc-300 text-[11px] font-bold flex items-center justify-center">
               {savedCount}
             </span>
-          </div>
+          </Link>
         </div>
-     </div>
+      </div>
     </header>
   );
 };
