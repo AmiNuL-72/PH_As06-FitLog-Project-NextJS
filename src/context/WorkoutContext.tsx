@@ -11,12 +11,15 @@ interface Toast {
 interface WorkoutContextType {
   planList: Workout[];
   savedList: Workout[];
+  completedIds: number[];
   addToPlan: (workout: Workout) => void;
   removeFromPlan: (id: number) => void;
   addToSaved: (workout: Workout) => void;
   removeFromSaved: (id: number) => void;
+  toggleDone: (id: number) => void;
   isInPlan: (id: number) => boolean;
   isInSaved: (id: number) => boolean;
+  isDone: (id: number) => boolean;
 }
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
@@ -24,15 +27,17 @@ const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
 export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [planList, setPlanList] = useState<Workout[]>([]);
   const [savedList, setSavedList] = useState<Workout[]>([]);
+  const [completedIds, setCompletedIds] = useState<number[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
-  // Load initial state from localStorage
   useEffect(() => {
     try {
       const savedPlan = localStorage.getItem('fitlog_plan');
       const savedSaved = localStorage.getItem('fitlog_saved');
+      const savedDone = localStorage.getItem('fitlog_done');
       if (savedPlan) setPlanList(JSON.parse(savedPlan));
       if (savedSaved) setSavedList(JSON.parse(savedSaved));
+      if (savedDone) setCompletedIds(JSON.parse(savedDone));
     } catch (e) {
       console.error('Failed to load from localStorage:', e);
     }
@@ -51,6 +56,15 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setSavedList(newList);
     try {
       localStorage.setItem('fitlog_saved', JSON.stringify(newList));
+    } catch (e) {
+      console.error('Failed to save to localStorage:', e);
+    }
+  };
+
+  const updateDone = (newDone: number[]) => {
+    setCompletedIds(newDone);
+    try {
+      localStorage.setItem('fitlog_done', JSON.stringify(newDone));
     } catch (e) {
       console.error('Failed to save to localStorage:', e);
     }
@@ -75,9 +89,10 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const removeFromPlan = (id: number) => {
+    const name = planList.find((i) => i.id === id)?.name || 'Workout';
     const updated = planList.filter((item) => item.id !== id);
     updatePlan(updated);
-    showToast(`Removed "${planList.find((i) => i.id === id)?.name || 'Workout'}" from today's plan.`);
+    showToast(`Removed "${name}" from today's plan.`);
   };
 
   const addToSaved = (workout: Workout) => {
@@ -91,25 +106,42 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const removeFromSaved = (id: number) => {
+    const name = savedList.find((i) => i.id === id)?.name || 'Workout';
     const updated = savedList.filter((item) => item.id !== id);
     updateSaved(updated);
-    showToast(`Removed "${savedList.find((i) => i.id === id)?.name || 'Workout'}" from saved list.`);
+    showToast(`Removed "${name}" from saved list.`);
+  };
+
+  const toggleDone = (id: number) => {
+    if (completedIds.includes(id)) {
+      const updated = completedIds.filter((item) => item !== id);
+      updateDone(updated);
+      showToast(`Unmarked workout as completed.`);
+    } else {
+      const updated = [...completedIds, id];
+      updateDone(updated);
+      showToast(`Marked workout as completed! Great job! 🎉`);
+    }
   };
 
   const isInPlan = (id: number) => planList.some((item) => item.id === id);
   const isInSaved = (id: number) => savedList.some((item) => item.id === id);
+  const isDone = (id: number) => completedIds.includes(id);
 
   return (
     <WorkoutContext.Provider
       value={{
         planList,
         savedList,
+        completedIds,
         addToPlan,
         removeFromPlan,
         addToSaved,
         removeFromSaved,
+        toggleDone,
         isInPlan,
         isInSaved,
+        isDone,
       }}
     >
       {children}
