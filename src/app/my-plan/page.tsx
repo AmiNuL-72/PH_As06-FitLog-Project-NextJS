@@ -34,19 +34,19 @@ function MyPlanContent() {
     else if (tabParam === 'plan') setActiveTab('plan');
   }, [searchParams]);
 
-  // Calculate stats summary
-  const totalExercises = planList.length;
+  // Active list based on selected tab (Today's Plan or Saved)
+  const rawList = activeTab === 'plan' ? planList : savedList;
+
+  // Dynamic stats calculation reflecting the currently active tab
+  const totalExercises = rawList.length;
   const totalMinutes = useMemo(
-    () => planList.reduce((acc, item) => acc + (item.duration || 0), 0),
-    [planList]
+    () => rawList.reduce((acc, item) => acc + (item.duration || 0), 0),
+    [rawList]
   );
   const totalCalories = useMemo(
-    () => planList.reduce((acc, item) => acc + (item.caloriesBurned || 0), 0),
-    [planList]
+    () => rawList.reduce((acc, item) => acc + (item.caloriesBurned || 0), 0),
+    [rawList]
   );
-
-  // Active list, searching & sorting
-  const rawList = activeTab === 'plan' ? planList : savedList;
 
   const filteredAndSortedList = useMemo(() => {
     let list = [...rawList];
@@ -94,12 +94,12 @@ function MyPlanContent() {
         </p>
       </div>
 
-      {/* Metrics Summary Row */}
+      {/* Metrics Summary Row (Dynamic 3 Stat Cards for Active Tab) */}
       <div className="bg-[#13141d] border border-zinc-800/80 rounded-2xl p-6 sm:p-8 mb-8 grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-0 divide-y sm:divide-y-0 sm:divide-x divide-zinc-800/80">
         {/* Exercises */}
         <div className="sm:px-6 first:pl-0">
           <span className="text-zinc-400 text-xs font-medium block mb-1 font-sans">
-            Exercises
+            Exercises ({activeTab === 'plan' ? "Today's Plan" : 'Saved'})
           </span>
           <span className="font-display font-black text-4xl sm:text-5xl text-[#a3e635]">
             {totalExercises}
@@ -127,7 +127,7 @@ function MyPlanContent() {
         </div>
       </div>
 
-      {/* Tabs (Left), Search & Sort By (Right) */}
+      {/* Controls Bar: Tabs (Left), Search & Sort By (Right) */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         {/* Tabs */}
         <div className="bg-[#13141d] border border-zinc-800/80 p-1.5 rounded-2xl inline-flex items-center gap-1 self-start">
@@ -180,7 +180,7 @@ function MyPlanContent() {
             )}
           </div>
 
-          {/* Sort By Dropdown */}
+          {/* Sort By Dropdown (C1 Requirement) */}
           <div className="flex items-center gap-2">
             <span className="text-zinc-400 text-xs font-medium">Sort By</span>
             <div className="relative inline-block">
