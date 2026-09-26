@@ -12,6 +12,7 @@ function MyPlanContent() {
   const initialTab = searchParams.get('tab') === 'saved' ? 'saved' : 'plan';
   const [activeTab, setActiveTab] = useState<'plan' | 'saved'>(initialTab);
   const [sortBy, setSortBy] = useState<'duration' | 'calories' | 'rating'>('duration');
+  const [searchQuery, setSearchQuery] = useState('');
   const [isMounted, setIsMounted] = useState(false);
 
   const {
@@ -44,11 +45,24 @@ function MyPlanContent() {
     [planList]
   );
 
-  // Active list & sorting
+  // Active list, searching & sorting
   const rawList = activeTab === 'plan' ? planList : savedList;
 
-  const sortedList = useMemo(() => {
-    const list = [...rawList];
+  const filteredAndSortedList = useMemo(() => {
+    let list = [...rawList];
+
+    // Filter by Search Query
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase().trim();
+      list = list.filter(
+        (w) =>
+          w.name.toLowerCase().includes(q) ||
+          w.equipment.toLowerCase().includes(q) ||
+          w.muscleGroups.some((g) => g.toLowerCase().includes(q))
+      );
+    }
+
+    // Sort List
     if (sortBy === 'duration') {
       list.sort((a, b) => b.duration - a.duration);
     } else if (sortBy === 'calories') {
@@ -56,8 +70,9 @@ function MyPlanContent() {
     } else if (sortBy === 'rating') {
       list.sort((a, b) => b.rating - a.rating);
     }
+
     return list;
-  }, [rawList, sortBy]);
+  }, [rawList, searchQuery, sortBy]);
 
   if (!isMounted) {
     return (
@@ -112,8 +127,8 @@ function MyPlanContent() {
         </div>
       </div>
 
-      {/* Controls Bar: Tabs (Left) & Sort By (Right) */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      {/* Tabs (Left), Search & Sort By (Right) */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         {/* Tabs */}
         <div className="bg-[#13141d] border border-zinc-800/80 p-1.5 rounded-2xl inline-flex items-center gap-1 self-start">
           <button
@@ -124,7 +139,7 @@ function MyPlanContent() {
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            Today&apos;s Plan
+            Today&apos;s Plan ({planList.length})
           </button>
           <button
             onClick={() => setActiveTab('saved')}
@@ -134,40 +149,68 @@ function MyPlanContent() {
                 : 'text-zinc-400 hover:text-white'
             }`}
           >
-            Saved
+            Saved ({savedList.length})
           </button>
         </div>
 
-        {/* Sort By Dropdown */}
-        <div className="flex items-center gap-2 self-end sm:self-auto font-sans">
-          <span className="text-zinc-400 text-xs font-medium">Sort By</span>
-          <div className="relative inline-block">
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value as any)}
-              className="appearance-none bg-[#13141d] border border-zinc-800 hover:border-zinc-700 text-white text-xs font-semibold pl-3.5 pr-8 py-2.5 rounded-xl outline-none cursor-pointer transition-colors"
-            >
-              <option value="duration">Duration</option>
-              <option value="calories">Calories</option>
-              <option value="rating">Rating</option>
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-zinc-400">
-              <svg
-                className="w-3.5 h-3.5 stroke-current fill-none"
-                viewBox="0 0 24 24"
-                strokeWidth="2"
-              >
-                <path d="M19 9l-7 7-7-7" />
+        {/* Search & Sort Controls */}
+        <div className="flex flex-wrap items-center gap-3 font-sans">
+          {/* Live Search Input */}
+          <div className="relative flex-1 sm:flex-none w-full sm:w-64">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search plan or tag..."
+              className="w-full bg-[#13141d] border border-zinc-800 text-white placeholder-zinc-500 text-xs pl-9 pr-3 py-2.5 rounded-xl outline-none focus:border-zinc-700 transition-colors"
+            />
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-500">
+              <svg className="w-3.5 h-3.5 stroke-current fill-none" viewBox="0 0 24 24" strokeWidth="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
               </svg>
+            </div>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute inset-y-0 right-0 pr-2.5 flex items-center text-zinc-400 hover:text-white text-xs"
+              >
+                ✕
+              </button>
+            )}
+          </div>
+
+          {/* Sort By Dropdown */}
+          <div className="flex items-center gap-2">
+            <span className="text-zinc-400 text-xs font-medium">Sort By</span>
+            <div className="relative inline-block">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="appearance-none bg-[#13141d] border border-zinc-800 hover:border-zinc-700 text-white text-xs font-semibold pl-3.5 pr-8 py-2.5 rounded-xl outline-none cursor-pointer transition-colors"
+              >
+                <option value="duration">Duration</option>
+                <option value="calories">Calories</option>
+                <option value="rating">Rating</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-zinc-400">
+                <svg
+                  className="w-3.5 h-3.5 stroke-current fill-none"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path d="M19 9l-7 7-7-7" />
+                </svg>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* List Container */}
-      {sortedList.length > 0 ? (
+      {filteredAndSortedList.length > 0 ? (
         <div className="space-y-4">
-          {sortedList.map((workout: Workout) => {
+          {filteredAndSortedList.map((workout: Workout) => {
             const done = isDone(workout.id);
 
             return (
@@ -297,12 +340,14 @@ function MyPlanContent() {
         </div>
       ) : (
         /* Empty State */
-        <div className="border border-dashed border-zinc-800/80 bg-[#13141d]/60 rounded-3xl p-12 sm:p-16 text-center my-8 flex flex-col items-center justify-center max-w-2xl mx-auto">
+        <div className="border border-dashed border-zinc-800/80 bg-[#13141d]/60 rounded-3xl p-12 sm:p-16 text-center my-8 flex flex-col items-center justify-center max-w-2xl mx-auto font-sans">
           <h3 className="font-display font-black text-xl sm:text-2xl text-white uppercase tracking-tight mb-2">
             NOTHING HERE YET
           </h3>
-          <p className="text-zinc-400 text-sm max-w-sm mb-6 font-sans leading-relaxed">
-            Browse the library and add a lift to get today moving.
+          <p className="text-zinc-400 text-sm max-w-sm mb-6 leading-relaxed">
+            {searchQuery
+              ? `No workouts found matching "${searchQuery}".`
+              : 'Browse the library and add a lift to get today moving.'}
           </p>
           <Link
             href="/#library"

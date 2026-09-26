@@ -20,6 +20,7 @@ interface WorkoutContextType {
   isInPlan: (id: number) => boolean;
   isInSaved: (id: number) => boolean;
   isDone: (id: number) => boolean;
+  isPlanFull: boolean;
 }
 
 const WorkoutContext = createContext<WorkoutContextType | undefined>(undefined);
@@ -30,6 +31,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [completedIds, setCompletedIds] = useState<number[]>([]);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
+  // Load from localStorage
   useEffect(() => {
     try {
       const savedPlan = localStorage.getItem('fitlog_plan');
@@ -79,13 +81,19 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const addToPlan = (workout: Workout) => {
-    if (!planList.some((item) => item.id === workout.id)) {
-      const updated = [...planList, workout];
-      updatePlan(updated);
-      showToast(`Added "${workout.name}" to today's plan!`);
-    } else {
+    if (planList.some((item) => item.id === workout.id)) {
       showToast(`"${workout.name}" is already in today's plan.`);
+      return;
     }
+
+    if (planList.length >= 5) {
+      showToast(`Today's plan is capped at 5 lifts. Finish them first! ⚠️`);
+      return;
+    }
+
+    const updated = [...planList, workout];
+    updatePlan(updated);
+    showToast(`Added "${workout.name}" to today's plan!`);
   };
 
   const removeFromPlan = (id: number) => {
@@ -127,6 +135,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const isInPlan = (id: number) => planList.some((item) => item.id === id);
   const isInSaved = (id: number) => savedList.some((item) => item.id === id);
   const isDone = (id: number) => completedIds.includes(id);
+  const isPlanFull = planList.length >= 5;
 
   return (
     <WorkoutContext.Provider
@@ -142,6 +151,7 @@ export const WorkoutProvider: React.FC<{ children: React.ReactNode }> = ({ child
         isInPlan,
         isInSaved,
         isDone,
+        isPlanFull,
       }}
     >
       {children}

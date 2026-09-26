@@ -1,7 +1,29 @@
 import { Suspense } from "react";
 import Hero from "@/components/home/Hero";
 import LibrarySection from "@/components/home/LibrarySection";
+import { Workout } from "@/types/workout";
 
+async function getWorkouts(): Promise<Workout[]> {
+  try {
+    const res = await fetch('https://api.abcz.workers.dev/api/fitlog', {
+      next: { revalidate: 3600 },
+    });
+
+    if (!res.ok) {
+      throw new Error('Failed to fetch workouts data');
+    }
+
+    return res.json();
+  } catch (error) {
+    console.error('Error fetching workouts:', error);
+    return [];
+  }
+}
+
+async function LibrarySectionWrapper() {
+  const workouts = await getWorkouts();
+  return <LibrarySection workouts={workouts} />;
+}
 
 function LibrarySkeleton() {
   return (
@@ -32,7 +54,7 @@ export default function Home() {
     <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
       <Hero />
       <Suspense fallback={<LibrarySkeleton />}>
-        <LibrarySection />
+        <LibrarySectionWrapper />
       </Suspense>
     </main>
   );
