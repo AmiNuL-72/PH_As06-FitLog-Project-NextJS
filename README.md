@@ -1,36 +1,57 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏋️ FitLog — Train With Intent. Log Every Set.
 
-## Getting Started
+FitLog is a dark-themed, modern, no-nonsense gym companion web application built with **Next.js 16 (App Router)**, **React 19**, and **Tailwind CSS v4**. Pick your lifts, lock them into today's workout plan, track your session metrics live, and watch your weekly progress add up!
 
-First, run the development server:
+---
+
+## 🚀 Technologies Used
+
+- **Framework:** [Next.js 16](https://nextjs.org/) (App Router & Server Components)
+- **Library:** [React 19](https://react.dev/)
+- **Language:** [TypeScript](https://www.typescriptlang.org/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/) & [DaisyUI](https://daisyui.com/)
+- **State Management:** React Context API & `localStorage` Persistence
+- **Typography:** Google Oswald (Display) & System Sans
+
+---
+
+## ✨ 5 Key Features
+
+1. **🏋️ Dynamic Workout Library & Data Fetching:**
+   Fetches workout data asynchronously from live REST endpoints with optimized Server Component rendering and streaming Suspense fallbacks.
+
+2. **📱 Interactive Two-Column Detail View:**
+   Detailed breakdown for each exercise including equipment specifications, difficulty tiers, set/rep recommendations, step-by-step instructions, and target muscle group tags.
+
+3. **📊 Live Metrics & Daily Plan Management:**
+   Add exercises to "Today's Plan" or "Saved" with real-time updates to status counters in the navbar and live summary calculations (total exercises, total duration minutes, total calories burned).
+
+4. **⚡ Real-Time Sorting & Interactive Completion:**
+   Instantly re-sort your planned workouts by **Duration**, **Calories**, or **Rating**. Mark exercises as completed with custom interactive toasts and persistence.
+
+5. **🔔 Custom Toast Notifications & Persistent Storage:**
+   Instant feedback notifications on user actions (adding, saving, completing, or removing lifts) backed by `localStorage` so your daily plan stays saved across page refreshes.
+
+---
+
+## 🛠️ Getting Started Locally
+
+First, install dependencies:
+
+```bash
+npm install
+```
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) with your browser to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📝 License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is created for educational and assignment purposes.

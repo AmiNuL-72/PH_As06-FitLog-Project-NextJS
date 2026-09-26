@@ -11,7 +11,7 @@ function MyPlanContent() {
   const searchParams = useSearchParams();
   const initialTab = searchParams.get('tab') === 'saved' ? 'saved' : 'plan';
   const [activeTab, setActiveTab] = useState<'plan' | 'saved'>(initialTab);
-  const [sortBy, setSortBy] = useState<'duration' | 'calories' | 'name' | 'rating'>('duration');
+  const [sortBy, setSortBy] = useState<'duration' | 'calories' | 'rating'>('duration');
   const [isMounted, setIsMounted] = useState(false);
 
   const {
@@ -33,7 +33,7 @@ function MyPlanContent() {
     else if (tabParam === 'plan') setActiveTab('plan');
   }, [searchParams]);
 
-  // Calculate stats summary 
+  // Calculate stats summary
   const totalExercises = planList.length;
   const totalMinutes = useMemo(
     () => planList.reduce((acc, item) => acc + (item.duration || 0), 0),
@@ -55,8 +55,6 @@ function MyPlanContent() {
       list.sort((a, b) => b.caloriesBurned - a.caloriesBurned);
     } else if (sortBy === 'rating') {
       list.sort((a, b) => b.rating - a.rating);
-    } else if (sortBy === 'name') {
-      list.sort((a, b) => a.name.localeCompare(b.name));
     }
     return list;
   }, [rawList, sortBy]);
@@ -114,7 +112,7 @@ function MyPlanContent() {
         </div>
       </div>
 
-      {/* Controls Bar */}
+      {/* Controls Bar: Tabs (Left) & Sort By (Right) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         {/* Tabs */}
         <div className="bg-[#13141d] border border-zinc-800/80 p-1.5 rounded-2xl inline-flex items-center gap-1 self-start">
@@ -143,16 +141,26 @@ function MyPlanContent() {
         {/* Sort By Dropdown */}
         <div className="flex items-center gap-2 self-end sm:self-auto font-sans">
           <span className="text-zinc-400 text-xs font-medium">Sort By</span>
-          <select
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value as any)}
-            className="bg-[#13141d] border border-zinc-800 text-white text-xs font-medium px-3.5 py-2 rounded-xl outline-none cursor-pointer focus:border-zinc-600 transition-colors"
-          >
-            <option value="duration">Duration</option>
-            <option value="calories">Calories</option>
-            <option value="name">Name</option>
-            <option value="rating">Rating</option>
-          </select>
+          <div className="relative inline-block">
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as any)}
+              className="appearance-none bg-[#13141d] border border-zinc-800 hover:border-zinc-700 text-white text-xs font-semibold pl-3.5 pr-8 py-2.5 rounded-xl outline-none cursor-pointer transition-colors"
+            >
+              <option value="duration">Duration</option>
+              <option value="calories">Calories</option>
+              <option value="rating">Rating</option>
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2.5 text-zinc-400">
+              <svg
+                className="w-3.5 h-3.5 stroke-current fill-none"
+                viewBox="0 0 24 24"
+                strokeWidth="2"
+              >
+                <path d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
         </div>
       </div>
 
